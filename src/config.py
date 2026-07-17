@@ -16,7 +16,7 @@ load_dotenv()
 class LLMConfig(BaseModel):
     provider: str = "deepseek"
     model: str = "deepseek-chat"
-    api_key: SecretStr = SecretStr("")
+    api_key: SecretStr = Field(default_factory=lambda: SecretStr(os.environ.get("DEEPSEEK_API_KEY", "")))
     base_url: str = "https://api.deepseek.com"
     temperature: float = 0.0
     max_tokens: int = 4096
@@ -132,7 +132,18 @@ class Settings(BaseSettings):
             # Resolve ${ENV_VAR} interpolation for any string value
             raw = _resolve_env_vars(raw)
         if not validate:
-            return cls.model_construct(**{**cls.model_construct().model_dump(), **raw})
+            # model_construct skips the top-level validate_api_key field_validator.
+            # Nested models use normal __init__ so type coercion (e.g. str→Path) works.
+            nested = {
+                "llm": LLMConfig(**(raw.get("llm") or {})),
+                "embedding": EmbeddingConfig(**(raw.get("embedding") or {})),
+                "chunking": ChunkingConfig(**(raw.get("chunking") or {})),
+                "graph": GraphConfig(**(raw.get("graph") or {})),
+                "retrieval": RetrievalConfig(**(raw.get("retrieval") or {})),
+                "paths": PathsConfig(**(raw.get("paths") or {})),
+                "server": ServerConfig(**(raw.get("server") or {})),
+            }
+            return cls.model_construct(**nested)
         return cls(**raw)
 
 

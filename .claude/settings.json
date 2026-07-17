@@ -77,7 +77,11 @@
       "Bash(conda env *)",
       "Bash(command -v pyenv asdf)",
       "Bash(xcode-select -p)",
-      "Bash(command -v brew)"
+      "Bash(command -v brew)",
+      "Bash(brew install *)",
+      "Bash(which python3.11 2>/dev/null || ls /opt/homebrew/bin/python3.11 2>/dev/null || echo \"not ready yet\")",
+      "Bash(python3.11 --version)",
+      "Bash(ls /opt/homebrew/bin/python3* 2>/dev/null || echo \"not yet\")"
     ]
   }
 }

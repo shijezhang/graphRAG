@@ -132,7 +132,7 @@ class Settings(BaseSettings):
             # Resolve ${ENV_VAR} interpolation for any string value
             raw = _resolve_env_vars(raw)
         if not validate:
-            return cls.model_construct(**{**cls().model_dump(), **raw})
+            return cls.model_construct(**{**cls.model_construct().model_dump(), **raw})
         return cls(**raw)
 
 

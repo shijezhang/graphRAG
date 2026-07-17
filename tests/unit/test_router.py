@@ -1,4 +1,5 @@
 """Unit tests for query router heuristic."""
+
 from __future__ import annotations
 
 import pytest

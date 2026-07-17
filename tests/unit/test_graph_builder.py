@@ -1,7 +1,6 @@
 """Unit tests for GraphBuilder deduplication and string_similarity."""
-from __future__ import annotations
 
-import pytest
+from __future__ import annotations
 
 from src.extraction.entity_extractor import Entity, ExtractionResult, Relation
 from src.graph.builder import GraphBuilder

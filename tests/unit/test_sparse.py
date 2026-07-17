@@ -1,10 +1,10 @@
 """Unit tests for SparseRetriever tokenization and search."""
+
 from __future__ import annotations
 
 import pytest
 
 from src.config import SparseRetrievalConfig
-from src.document.chunker import Chunk
 from src.retrieval.sparse import SparseRetriever, _tokenize
 
 

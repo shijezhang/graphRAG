@@ -81,7 +81,10 @@
       "Bash(brew install *)",
       "Bash(which python3.11 2>/dev/null || ls /opt/homebrew/bin/python3.11 2>/dev/null || echo \"not ready yet\")",
       "Bash(python3.11 --version)",
-      "Bash(ls /opt/homebrew/bin/python3* 2>/dev/null || echo \"not yet\")"
+      "Bash(ls /opt/homebrew/bin/python3* 2>/dev/null || echo \"not yet\")",
+      "Bash(/opt/homebrew/bin/python3.11 -m pip install -e .)",
+      "Bash(break)",
+      "Bash(/opt/homebrew/bin/python3.11 -m pip install networkx rank-bm25 pydantic pydantic-settings pyyaml python-dotenv)"
     ]
   }
 }

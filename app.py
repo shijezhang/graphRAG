@@ -23,22 +23,21 @@ def initialize_agent():
 
     # Collect knowledge base stats for display
     import json
-    from pathlib import Path
 
     try:
-        chunks = json.loads(Path("data/processed/chunks.json").read_text())
+        chunks = json.loads(settings.paths.chunks_file.read_text())
         _kb_stats["chunks"] = len(chunks)
     except Exception:
         _kb_stats["chunks"] = "?"
     try:
-        graph = json.loads(Path("data/graphs/knowledge_graph.json").read_text())
+        graph = json.loads(settings.paths.graph_file.read_text())
         _kb_stats["nodes"] = len(graph.get("nodes", []))
         _kb_stats["edges"] = len(graph.get("links", []))
     except Exception:
         _kb_stats["nodes"] = "?"
         _kb_stats["edges"] = "?"
     try:
-        communities = json.loads(Path("data/graphs/communities.json").read_text())
+        communities = json.loads(settings.paths.communities_file.read_text())
         total = sum(len(level) for level in communities)
         _kb_stats["communities"] = total
     except Exception:
@@ -146,7 +145,11 @@ def create_app() -> gr.Blocks:
             chat_history = chat_history + [[message, ""]]
             yield "", chat_history, meta, "处理中...", "检索中...", "—", "—"
 
-            # Stream response
+            # Stream response — use a fresh per-request history snapshot to avoid
+            # the global agent.history being corrupted across concurrent users.
+            per_request_history = list(agent.history)
+            agent.history = per_request_history
+
             full_response = ""
             query_type = "—"
             retrieval_src = "—"
@@ -195,6 +198,11 @@ def create_app() -> gr.Blocks:
 
 if __name__ == "__main__":
     initialize_agent()
+    settings = get_settings()
     app = create_app()
     app.queue()
-    app.launch(server_name="0.0.0.0", server_port=7860)
+    app.launch(
+        server_name=settings.server.host,
+        server_port=settings.server.port,
+        auth=settings.server.auth,
+    )

@@ -1,11 +1,8 @@
 """Unit tests for document chunker, including CJK overlap bug."""
+
 from __future__ import annotations
 
 import json
-import tempfile
-from pathlib import Path
-
-import pytest
 
 from src.config import ChunkingConfig
 from src.document.chunker import Chunk, RecursiveChunker, _estimate_tokens

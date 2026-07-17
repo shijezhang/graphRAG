@@ -47,11 +47,14 @@ class ExpertAgent:
 
     def initialize(
         self,
-        chunks_path: str = "data/processed/chunks.json",
-        graph_path: str = "data/graphs/knowledge_graph.json",
-        communities_path: str = "data/graphs/communities.json",
+        chunks_path: str | None = None,
+        graph_path: str | None = None,
+        communities_path: str | None = None,
         use_dense: bool = False,
     ) -> None:
+        chunks_path = chunks_path or str(self.settings.paths.chunks_file)
+        graph_path = graph_path or str(self.settings.paths.graph_file)
+        communities_path = communities_path or str(self.settings.paths.communities_file)
         self.retriever.index_from_files(chunks_path, graph_path, communities_path, use_dense)
         logger.info("Agent initialized with all retrieval indices")
 

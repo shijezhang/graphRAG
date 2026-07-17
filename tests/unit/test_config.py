@@ -1,7 +1,9 @@
 """Unit tests for config system: env loading, SecretStr, validate=False."""
+
 from __future__ import annotations
 
 import pytest
+from pydantic import ValidationError
 
 from src.config import Settings, _resolve_env_vars
 
@@ -31,7 +33,7 @@ class TestResolveEnvVars:
 class TestSettingsValidation:
     def test_raises_without_api_key(self, monkeypatch):
         monkeypatch.delenv("DEEPSEEK_API_KEY", raising=False)
-        with pytest.raises(Exception):
+        with pytest.raises(ValidationError):
             Settings(llm={"api_key": ""})
 
     def test_valid_with_api_key(self, monkeypatch):

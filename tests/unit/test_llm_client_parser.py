@@ -1,7 +1,6 @@
 """Unit tests for LLM client JSON parsing/recovery (no network calls)."""
-from __future__ import annotations
 
-import pytest
+from __future__ import annotations
 
 from src.extraction.llm_client import _parse_json_response
 

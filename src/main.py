@@ -53,9 +53,9 @@ def ingest(
 
 @app.command()
 def build_graph(
-    chunks_file: str = typer.Argument("data/processed/chunks.json", help="chunks JSON 文件路径"),
+    chunks_file: str = typer.Argument("", help="chunks JSON 文件路径（默认读取配置）"),
     config: str = typer.Option("configs/default.yaml", help="配置文件路径"),
-    output: str = typer.Option("data/graphs/knowledge_graph.json", help="图谱输出路径"),
+    output: str = typer.Option("", help="图谱输出路径（默认读取配置）"),
 ):
     """从 chunks 中抽取实体/关系并构建知识图谱"""
     import logging
@@ -67,8 +67,11 @@ def build_graph(
     logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
     settings = get_settings(config)
 
-    console.print(f"[bold]Loading chunks from:[/bold] {chunks_file}")
-    chunks = Chunk.load_from_json(chunks_file)
+    chunks_path = chunks_file or str(settings.paths.chunks_file)
+    output_path = Path(output or str(settings.paths.graph_file))
+
+    console.print(f"[bold]Loading chunks from:[/bold] {chunks_path}")
+    chunks = Chunk.load_from_json(chunks_path)
     console.print(f"  Loaded {len(chunks)} chunk(s)")
 
     console.print("[bold]Extracting entities and relations...[/bold]")
@@ -80,8 +83,8 @@ def build_graph(
     builder = GraphBuilder()
     graph = builder.build_from_extraction(result)
 
-    builder.save(output)
-    console.print(f"[green]Graph saved to {output}[/green]")
+    builder.save(output_path)
+    console.print(f"[green]Graph saved to {output_path}[/green]")
 
     table = Table(title="Knowledge Graph Statistics")
     table.add_column("Metric", style="cyan")
@@ -94,9 +97,9 @@ def build_graph(
 
 @app.command()
 def build_communities(
-    graph_file: str = typer.Argument("data/graphs/knowledge_graph.json", help="知识图谱 JSON 文件"),
+    graph_file: str = typer.Argument("", help="知识图谱 JSON 文件（默认读取配置）"),
     config: str = typer.Option("configs/default.yaml", help="配置文件路径"),
-    output: str = typer.Option("data/graphs/communities.json", help="社区输出路径"),
+    output: str = typer.Option("", help="社区输出路径（默认读取配置）"),
     summarize: bool = typer.Option(True, help="是否生成社区摘要"),
 ):
     """在知识图谱上运行社区发现并生成层级摘要"""
@@ -109,8 +112,11 @@ def build_communities(
     logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
     settings = get_settings(config)
 
-    console.print(f"[bold]Loading graph from:[/bold] {graph_file}")
-    builder = GraphBuilder.load(graph_file)
+    graph_path = graph_file or str(settings.paths.graph_file)
+    output_path = Path(output or str(settings.paths.communities_file))
+
+    console.print(f"[bold]Loading graph from:[/bold] {graph_path}")
+    builder = GraphBuilder.load(graph_path)
     graph = builder.graph
     console.print(f"  {graph.number_of_nodes()} nodes, {graph.number_of_edges()} edges")
 
@@ -127,8 +133,6 @@ def build_communities(
         for level_communities in hierarchy:
             summarizer.summarize_communities(level_communities, graph)
 
-    output_path = Path(output)
-    output_path.parent.mkdir(parents=True, exist_ok=True)
     _save_communities(hierarchy, output_path)
     console.print(f"[green]Communities saved to {output_path}[/green]")
 
@@ -144,6 +148,7 @@ def build_communities(
 
 
 def _save_communities(hierarchy: list, path: Path) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
     data = []
     for level_communities in hierarchy:
         level_data = []

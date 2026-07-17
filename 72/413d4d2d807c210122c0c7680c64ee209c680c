@@ -1,0 +1,39 @@
+.claude/settings.json
+  s_c066284d096fa2::t_c66d9c1e2e7524 80-84
+.github/workflows/ci.yml
+  s_c066284d096fa2::t_287717622a7dc6 1-40
+src/config.py
+  s_c066284d096fa2::t_420962329ad216 135
+tests/conftest.py
+  s_c066284d096fa2::t_fe2f989033a4c4 1-31
+tests/unit/test_chunker.py
+  s_c066284d096fa2::t_e3979e05977bfb 1-99
+tests/unit/test_config.py
+  s_c066284d096fa2::t_6e88a1be12c548 1-71
+tests/unit/test_graph_builder.py
+  s_c066284d096fa2::t_5012fc0722fc96 1-76
+tests/unit/test_llm_client_parser.py
+  s_c066284d096fa2::t_da6fa3a9561fef 1-49
+tests/unit/test_router.py
+  s_c066284d096fa2::t_c50621c36ba2ae 1-37
+tests/unit/test_sparse.py
+  s_c066284d096fa2::t_2ced0a3e021ce0 1-61
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "72413d4d2d807c210122c0c7680c64ee209c680c",
+  "prompts": {},
+  "sessions": {
+    "s_c066284d096fa2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "107c7148-a83a-42cf-8240-3b571b8e78ea",
+        "model": "unknown"
+      },
+      "human_author": "zhangshijie <zhangshijie.bd@bytedance.com>"
+    }
+  },
+  "attestation_metadata": {},
+  "remote_transcripts": {}
+}

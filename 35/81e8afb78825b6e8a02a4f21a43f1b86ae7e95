@@ -1,0 +1,33 @@
+eval/run_eval.py
+  s_c066284d096fa2::t_d4ce4ab7c71661 80
+src/document/chunker.py
+  s_c066284d096fa2::t_eb27dca3142331 1,4,6,26-45
+src/graph/builder.py
+  s_c066284d096fa2::t_2bdebee682e287 10,117
+src/main.py
+  s_c066284d096fa2::t_47a5bdfe8005b4 74
+src/retrieval/graph_local.py
+  s_c066284d096fa2::t_f0fead83b831dc 3,10,52
+src/retrieval/hybrid.py
+  s_c066284d096fa2::t_fbf1bccb71abf9 137
+src/utils.py
+  s_c066284d096fa2::t_4be64df79b1916 1-17
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "3581e8afb78825b6e8a02a4f21a43f1b86ae7e95",
+  "prompts": {},
+  "sessions": {
+    "s_c066284d096fa2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "107c7148-a83a-42cf-8240-3b571b8e78ea",
+        "model": "unknown"
+      },
+      "human_author": "zhangshijie <zhangshijie.bd@bytedance.com>"
+    }
+  },
+  "attestation_metadata": {},
+  "remote_transcripts": {}
+}

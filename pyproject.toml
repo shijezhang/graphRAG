@@ -1,0 +1,55 @@
+[project]
+name = "graphrag-v2"
+version = "0.1.0"
+description = "基于 GraphRAG 与混合检索的垂直领域专家 Agent"
+requires-python = ">=3.9"
+dependencies = [
+    "langchain>=0.3",
+    "langchain-community>=0.3",
+    "langchain-openai>=0.2",
+    "openai>=1.0",
+    "networkx>=3.2",
+    "leidenalg>=0.10",
+    "igraph>=0.11",
+    "faiss-cpu>=1.7",
+    "rank-bm25>=0.2",
+    "sentence-transformers>=3.0",
+    "pydantic>=2.0",
+    "pydantic-settings>=2.0",
+    "pyyaml>=6.0",
+    "gradio>=4.19.2,<4.20",
+    "pymupdf>=1.24",
+    "tiktoken>=0.7",
+    "numpy>=1.26",
+    "rich>=13.0",
+    "typer>=0.12",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.23",
+    "ruff>=0.5",
+    "ipykernel>=6.0",
+]
+
+[project.scripts]
+graphrag = "src.main:app"
+
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["src*"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"

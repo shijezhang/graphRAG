@@ -1,0 +1,39 @@
+# Python
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info
+dist/
+build/
+
+# Environment
+.env
+.env.local
+
+# Data and cache
+data/
+.llm_cache/
+
+# Evaluation results
+eval/results/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Superpowers (local development only)
+.superpowers/
+
+# Claude
+.claude/settings.local.json

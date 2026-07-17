@@ -1,0 +1,45 @@
+llm:
+  provider: deepseek
+  model: deepseek-chat
+  api_key: ${DEEPSEEK_API_KEY}  # Set via environment variable
+  base_url: https://api.deepseek.com
+  temperature: 0.0
+  max_tokens: 4096
+
+embedding:
+  model: BAAI/bge-m3
+  device: cpu
+  batch_size: 32
+
+chunking:
+  chunk_size: 500
+  chunk_overlap: 100
+  separators:
+    - "\n\n"
+    - "\n"
+    - "。"
+    - "."
+    - " "
+
+graph:
+  community_algorithm: leiden
+  resolution: 1.0
+  max_community_levels: 3
+
+retrieval:
+  dense:
+    top_k: 10
+  sparse:
+    top_k: 10
+  graph_local:
+    max_hops: 2
+    top_k: 10
+  graph_global:
+    community_level: 1
+    top_k: 5
+
+paths:
+  raw_data: data/raw
+  processed_data: data/processed
+  graph_output: data/graphs
+  eval_data: eval

@@ -1,0 +1,72 @@
+[
+  {
+    "id": "L1",
+    "type": "local",
+    "question": "What is the core innovation of GraphRAG compared to naive RAG?",
+    "reference_answer": "GraphRAG builds a knowledge graph from source documents, runs community detection (Leiden algorithm) to cluster entities, generates hierarchical community summaries, and uses a Map-Reduce approach for global queries — enabling answers that require synthesizing information across the entire corpus, which naive RAG's top-k vector retrieval cannot do.",
+    "key_points": ["knowledge graph", "community detection", "Leiden", "Map-Reduce", "global queries"]
+  },
+  {
+    "id": "L2",
+    "type": "local",
+    "question": "What retrieval method does the original RAG paper (Lewis et al. 2020) propose?",
+    "reference_answer": "The original RAG paper proposes combining a dense passage retriever (DPR) with a seq2seq generator (BART). It retrieves relevant documents using maximum inner product search over dense embeddings, then conditions generation on the retrieved passages.",
+    "key_points": ["DPR", "dense passage retriever", "BART", "seq2seq", "maximum inner product search"]
+  },
+  {
+    "id": "L3",
+    "type": "local",
+    "question": "What is the Leiden algorithm and why does GraphRAG use it instead of Louvain?",
+    "reference_answer": "Leiden is a community detection algorithm that improves on Louvain by guaranteeing well-connected communities and avoiding disconnected communities. GraphRAG uses it to partition the knowledge graph into hierarchical clusters for summarization.",
+    "key_points": ["community detection", "well-connected", "Louvain", "hierarchical", "partition"]
+  },
+  {
+    "id": "L4",
+    "type": "local",
+    "question": "How does Self-RAG decide whether to retrieve documents?",
+    "reference_answer": "Self-RAG uses special reflection tokens. It generates a 'Retrieve' token to decide whether retrieval is needed, then 'ISREL' tokens to assess relevance of retrieved passages, 'ISSUP' tokens to check if the output is supported, and 'ISUSE' tokens to evaluate overall utility.",
+    "key_points": ["reflection tokens", "Retrieve token", "ISREL", "ISSUP", "ISUSE", "adaptive retrieval"]
+  },
+  {
+    "id": "L5",
+    "type": "local",
+    "question": "What is HyDE and how does it improve retrieval?",
+    "reference_answer": "HyDE (Hypothetical Document Embeddings) generates a hypothetical document that would answer the query using an LLM, then encodes that hypothetical document for retrieval instead of the query itself. This bridges the gap between query and document embedding spaces.",
+    "key_points": ["hypothetical document", "LLM generation", "embedding", "query-document gap", "zero-shot"]
+  },
+  {
+    "id": "G1",
+    "type": "global",
+    "question": "Summarize the main limitations of traditional RAG systems that the papers in this corpus address.",
+    "reference_answer": "Traditional RAG struggles with: (1) global queries requiring full-corpus synthesis (GraphRAG); (2) unnecessary retrieval for simple queries and lack of self-assessment (Self-RAG); (3) query-document embedding mismatch (HyDE); (4) inability to handle knowledge-intensive tasks without parametric knowledge (original RAG).",
+    "key_points": ["global queries", "unnecessary retrieval", "embedding mismatch", "knowledge-intensive", "self-assessment"]
+  },
+  {
+    "id": "G2",
+    "type": "global",
+    "question": "What evaluation datasets and metrics are commonly used across the RAG papers in this corpus?",
+    "reference_answer": "Common datasets include Natural Questions, TriviaQA, WebQuestions, MS-MARCO, and custom benchmarks. Metrics include Exact Match (EM), F1 score, ROUGE, comprehensiveness, diversity, and human evaluation. GraphRAG introduces its own global sensemaking benchmark.",
+    "key_points": ["Natural Questions", "TriviaQA", "Exact Match", "F1", "ROUGE", "comprehensiveness"]
+  },
+  {
+    "id": "G3",
+    "type": "global",
+    "question": "How do the different RAG approaches in this corpus handle the trade-off between retrieval cost and answer quality?",
+    "reference_answer": "Original RAG always retrieves. Self-RAG uses adaptive retrieval tokens to skip retrieval when unnecessary. HyDE adds LLM generation overhead but improves retrieval precision. GraphRAG uses community summaries for global queries (expensive but comprehensive) and falls back to local retrieval for specific questions.",
+    "key_points": ["adaptive retrieval", "always retrieve", "community summaries", "cost", "precision"]
+  },
+  {
+    "id": "G4",
+    "type": "global",
+    "question": "What are the key technical contributions across all papers in this corpus?",
+    "reference_answer": "Key contributions: (1) RAG: first to combine dense retrieval with generative models for open-domain QA; (2) GraphRAG: knowledge graph + community detection for global query answering; (3) Self-RAG: reflection tokens for adaptive, self-critical retrieval; (4) HyDE: hypothetical document generation to close embedding space gap.",
+    "key_points": ["dense retrieval + generation", "knowledge graph", "reflection tokens", "hypothetical document", "contributions"]
+  },
+  {
+    "id": "G5",
+    "type": "global",
+    "question": "Compare the approaches to handling multi-hop or complex reasoning across the papers.",
+    "reference_answer": "GraphRAG handles multi-hop reasoning through graph traversal and community summaries that aggregate related entities. Self-RAG handles it through iterative retrieval and self-critique. The original RAG paper uses marginalization over retrieved documents. HyDE improves single-hop retrieval quality but does not explicitly address multi-hop.",
+    "key_points": ["graph traversal", "iterative retrieval", "marginalization", "multi-hop", "community summaries"]
+  }
+]

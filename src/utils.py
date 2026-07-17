@@ -1,4 +1,5 @@
 """Utility functions shared across modules."""
+
 from __future__ import annotations
 
 from difflib import SequenceMatcher

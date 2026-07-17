@@ -24,6 +24,7 @@ def initialize_agent():
     # Collect knowledge base stats for display
     import json
     from pathlib import Path
+
     try:
         chunks = json.loads(Path("data/processed/chunks.json").read_text())
         _kb_stats["chunks"] = len(chunks)
@@ -80,7 +81,8 @@ def create_app() -> gr.Blocks:
         # Header
         gr.Markdown(
             f"""# 📈 金融知识图谱专家 Agent
-基于 GraphRAG 的金融领域智能问答系统 · 知识图谱: **{kb_nodes}** 实体 / **{kb_edges}** 关系 / **{kb_communities}** 社区 / **{kb_chunks}** 文本块"""
+基于 GraphRAG 的金融领域智能问答系统 · 知识图谱: **{kb_nodes}** 实体 / **{kb_edges}** 关系 / \
+**{kb_communities}** 社区 / **{kb_chunks}** 文本块"""
         )
 
         with gr.Row():
@@ -158,7 +160,7 @@ def create_app() -> gr.Blocks:
             # Extract metadata from source note in response
             latency = f"{(time.time() - t0) * 1000:.0f} ms"
             if "📎 检索方式:" in full_response:
-                note_line = [l for l in full_response.split("\n") if "📎 检索方式:" in l]
+                note_line = [ln for ln in full_response.split("\n") if "📎 检索方式:" in ln]
                 if note_line:
                     parts = note_line[0].replace("📎 检索方式:", "").split("|")
                     retrieval_src = parts[0].strip() if parts else "—"

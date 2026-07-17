@@ -60,7 +60,24 @@
       "Bash(security find-generic-password *)",
       "Bash(ssh -T git@github.com -o BatchMode=yes -o ConnectTimeout=5)",
       "Bash(git rm *)",
-      "Bash(git commit *)"
+      "Bash(git commit *)",
+      "Bash(python3 -m pip freeze)",
+      "Bash(python3 -m pip show ipykernel)",
+      "Bash(python3 -m pip index versions ipykernel)",
+      "Bash(python3 -m ruff check .)",
+      "Bash(python3 -m ruff check . --select E501)",
+      "Bash(python3 -)",
+      "Bash(python3 -m ruff check eval/run_eval.py --select E501)",
+      "Bash(python3 -m ruff format --check .)",
+      "Bash(python3 -m ruff format .)",
+      "Bash(DEEPSEEK_API_KEY=sk-test python3 -c ' *)",
+      "Bash(which python3.10 python3.11 python3.12 2>&1; ls /usr/local/bin/python* /opt/homebrew/bin/python* ~/.pyenv/shims/python* 2>/dev/null | head -20)",
+      "Bash(brew list *)",
+      "Bash(pyenv versions *)",
+      "Bash(conda env *)",
+      "Bash(command -v pyenv asdf)",
+      "Bash(xcode-select -p)",
+      "Bash(command -v brew)"
     ]
   }
 }

@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+import contextlib
 import hashlib
 import json
+from collections.abc import Generator
 from pathlib import Path
-from typing import Any, Generator
+from typing import Any
 
 from openai import OpenAI
 
@@ -13,10 +15,7 @@ from src.config import LLMConfig
 class LLMClient:
     def __init__(self, config: LLMConfig, cache_dir: str | Path | None = "data/processed/.llm_cache"):
         self.config = config
-        self.client = OpenAI(
-            api_key=config.api_key.get_secret_value(),
-            base_url=config.base_url
-        )
+        self.client = OpenAI(api_key=config.api_key.get_secret_value(), base_url=config.base_url)
         self.cache_dir = Path(cache_dir) if cache_dir else None
         if self.cache_dir:
             self.cache_dir.mkdir(parents=True, exist_ok=True)
@@ -126,10 +125,8 @@ def _parse_json_response(text: str) -> dict[str, Any]:
                 elif text[i] == "]":
                     depth -= 1
                     if depth == 0:
-                        try:
+                        with contextlib.suppress(json.JSONDecodeError):
                             result[key] = json.loads(text[bracket : i + 1])
-                        except json.JSONDecodeError:
-                            pass
                         break
                 i += 1
         return result

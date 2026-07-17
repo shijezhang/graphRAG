@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import json
 import logging
 
 import networkx as nx
@@ -66,6 +65,7 @@ class GraphLocalRetriever:
                 source_chunks = node_data.get("source_chunks", [])
                 if isinstance(source_chunks, str):
                     import json
+
                     source_chunks = json.loads(source_chunks)
                 decay = 1.0 / (1.0 + distance)
                 for chunk_idx in source_chunks:
@@ -77,6 +77,7 @@ class GraphLocalRetriever:
                 source_chunks = edge_data.get("source_chunks", [])
                 if isinstance(source_chunks, str):
                     import json
+
                     source_chunks = json.loads(source_chunks)
                 for chunk_idx in source_chunks:
                     chunk_idx = int(chunk_idx)

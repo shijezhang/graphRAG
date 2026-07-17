@@ -6,7 +6,7 @@ from pathlib import Path
 
 import numpy as np
 
-from src.config import EmbeddingConfig, DenseRetrievalConfig
+from src.config import DenseRetrievalConfig, EmbeddingConfig
 from src.document.chunker import Chunk
 
 logger = logging.getLogger(__name__)
@@ -24,9 +24,8 @@ class DenseRetriever:
     def model(self):
         if self._model is None:
             from sentence_transformers import SentenceTransformer
-            self._model = SentenceTransformer(
-                self.embedding_config.model, device=self.embedding_config.device
-            )
+
+            self._model = SentenceTransformer(self.embedding_config.model, device=self.embedding_config.device)
         return self._model
 
     def index(self, chunks: list[Chunk]) -> None:
@@ -36,9 +35,7 @@ class DenseRetriever:
         texts = [c.content for c in chunks]
 
         logger.info(f"Encoding {len(texts)} chunks...")
-        embeddings = self.model.encode(
-            texts, batch_size=self.embedding_config.batch_size, show_progress_bar=True
-        )
+        embeddings = self.model.encode(texts, batch_size=self.embedding_config.batch_size, show_progress_bar=True)
         embeddings = np.array(embeddings, dtype=np.float32)
 
         dim = embeddings.shape[1]
@@ -61,7 +58,7 @@ class DenseRetriever:
         scores, indices = self._index.search(query_embedding, min(top_k, len(self._chunks)))
 
         results = []
-        for score, idx in zip(scores[0], indices[0]):
+        for score, idx in zip(scores[0], indices[0], strict=True):
             if idx < 0:
                 continue
             results.append((self._chunks[idx], float(score)))
@@ -75,12 +72,9 @@ class DenseRetriever:
         if self._index:
             faiss.write_index(self._index, str(path / "dense.index"))
         chunks_data = [
-            {"content": c.content, "metadata": c.metadata, "chunk_index": c.chunk_index}
-            for c in self._chunks
+            {"content": c.content, "metadata": c.metadata, "chunk_index": c.chunk_index} for c in self._chunks
         ]
-        (path / "dense_chunks.json").write_text(
-            json.dumps(chunks_data, ensure_ascii=False), encoding="utf-8"
-        )
+        (path / "dense_chunks.json").write_text(json.dumps(chunks_data, ensure_ascii=False), encoding="utf-8")
 
     def load(self, path: str | Path) -> None:
         import faiss

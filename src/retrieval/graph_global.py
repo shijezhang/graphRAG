@@ -67,8 +67,7 @@ class GraphGlobalRetriever:
         level = min(self.config.community_level, len(self._communities) - 1)
         self._bm25_communities = self._communities[level]
         corpus = [
-            (c.title + " " + c.summary + " " + " ".join(c.key_findings)).lower().split()
-            for c in self._bm25_communities
+            (c.title + " " + c.summary + " " + " ".join(c.key_findings)).lower().split() for c in self._bm25_communities
         ]
         self._bm25_index = BM25Okapi(corpus)
 

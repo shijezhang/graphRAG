@@ -2,7 +2,7 @@
 name = "graphrag-v2"
 version = "0.1.0"
 description = "基于 GraphRAG 与混合检索的垂直领域专家 Agent"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 dependencies = [
     "openai>=1.0",
     "networkx>=3.2",
@@ -42,11 +42,14 @@ build-backend = "setuptools.build_meta"
 include = ["src*"]
 
 [tool.ruff]
-line-length = 100
-target-version = "py311"
+line-length = 120
+target-version = "py310"
 
 [tool.ruff.lint]
-select = ["E", "F", "I", "N", "W"]
+select = ["E", "F", "I", "N", "W", "B", "UP", "C4", "SIM"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["SIM117"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

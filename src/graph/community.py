@@ -49,10 +49,7 @@ class CommunityDetector:
             communities = self._partition_to_communities(partition, reverse_mapping, level)
             if communities:
                 hierarchy.append(communities)
-                logger.info(
-                    f"Level {level} (resolution={resolution:.2f}): "
-                    f"{len(communities)} communities"
-                )
+                logger.info(f"Level {level} (resolution={resolution:.2f}): {len(communities)} communities")
 
         return hierarchy
 
@@ -87,7 +84,5 @@ class CommunityDetector:
             if not members:
                 continue
             node_keys = [reverse_mapping[m] for m in members]
-            communities.append(
-                Community(id=comm_id, level=level, node_keys=node_keys)
-            )
+            communities.append(Community(id=comm_id, level=level, node_keys=node_keys))
         return communities

@@ -5,12 +5,9 @@ from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from pathlib import Path
 
-import networkx as nx
-
 from src.config import Settings
 from src.document.chunker import Chunk
 from src.graph.builder import GraphBuilder
-from src.graph.community import Community
 from src.retrieval.dense import DenseRetriever
 from src.retrieval.graph_global import GraphGlobalRetriever
 from src.retrieval.graph_local import GraphLocalRetriever

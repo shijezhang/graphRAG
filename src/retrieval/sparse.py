@@ -42,19 +42,19 @@ class SparseRetriever:
 def _tokenize(text: str) -> list[str]:
     # Simple tokenization: split on non-word chars, keep Chinese chars as individual tokens
     tokens = []
-    for segment in re.split(r'\s+', text):
+    for segment in re.split(r"\s+", text):
         i = 0
         while i < len(segment):
             char = segment[i]
-            if '一' <= char <= '鿿':
+            if "一" <= char <= "鿿":
                 tokens.append(char)
                 i += 1
             else:
                 word = ""
-                while i < len(segment) and not ('一' <= segment[i] <= '鿿'):
+                while i < len(segment) and not ("一" <= segment[i] <= "鿿"):
                     word += segment[i]
                     i += 1
-                word = re.sub(r'[^\w]', '', word).lower()
+                word = re.sub(r"[^\w]", "", word).lower()
                 if word:
                     tokens.append(word)
     return tokens

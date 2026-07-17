@@ -27,19 +27,14 @@ class GraphBuilder:
         for relation in result.relations:
             self._add_relation(relation)
 
-        logger.info(
-            f"Graph built: {self.graph.number_of_nodes()} nodes, "
-            f"{self.graph.number_of_edges()} edges"
-        )
+        logger.info(f"Graph built: {self.graph.number_of_nodes()} nodes, {self.graph.number_of_edges()} edges")
         return self.graph
 
     def _add_entity(self, entity: Entity) -> None:
         key = entity.key
         if self.graph.has_node(key):
             node_data = self.graph.nodes[key]
-            node_data["source_chunks"] = list(
-                set(node_data.get("source_chunks", []) + entity.source_chunks)
-            )
+            node_data["source_chunks"] = list(set(node_data.get("source_chunks", []) + entity.source_chunks))
             if entity.description and len(entity.description) > len(node_data.get("description", "")):
                 node_data["description"] = entity.description
         else:
@@ -63,9 +58,7 @@ class GraphBuilder:
         if self.graph.has_edge(source_key, target_key):
             edge_data = self.graph.edges[source_key, target_key]
             edge_data["weight"] = max(edge_data.get("weight", 0), relation.weight)
-            edge_data["source_chunks"] = list(
-                set(edge_data.get("source_chunks", []) + relation.source_chunks)
-            )
+            edge_data["source_chunks"] = list(set(edge_data.get("source_chunks", []) + relation.source_chunks))
             descriptions = edge_data.get("descriptions", [])
             if relation.description and relation.description not in descriptions:
                 descriptions.append(relation.description)
@@ -139,7 +132,7 @@ class GraphBuilder:
         logger.info(f"Graph saved to {path}")
 
     @classmethod
-    def load(cls, path: str | Path) -> "GraphBuilder":
+    def load(cls, path: str | Path) -> GraphBuilder:
         path = Path(path)
         builder = cls()
         if path.suffix == ".graphml":

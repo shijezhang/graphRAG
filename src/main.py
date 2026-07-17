@@ -36,10 +36,7 @@ def ingest(
     output_path = Path(output)
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
-    chunk_data = [
-        {"content": c.content, "metadata": c.metadata, "chunk_index": c.chunk_index}
-        for c in chunks
-    ]
+    chunk_data = [{"content": c.content, "metadata": c.metadata, "chunk_index": c.chunk_index} for c in chunks]
     output_path.write_text(json.dumps(chunk_data, ensure_ascii=False, indent=2), encoding="utf-8")
     console.print(f"[green]Saved to {output_path}[/green]")
 
@@ -151,15 +148,17 @@ def _save_communities(hierarchy: list, path: Path) -> None:
     for level_communities in hierarchy:
         level_data = []
         for c in level_communities:
-            level_data.append({
-                "id": c.id,
-                "level": c.level,
-                "node_keys": c.node_keys,
-                "title": c.title,
-                "summary": c.summary,
-                "key_findings": c.key_findings,
-                "importance_score": c.importance_score,
-            })
+            level_data.append(
+                {
+                    "id": c.id,
+                    "level": c.level,
+                    "node_keys": c.node_keys,
+                    "title": c.title,
+                    "summary": c.summary,
+                    "key_findings": c.key_findings,
+                    "importance_score": c.importance_score,
+                }
+            )
         data.append(level_data)
     path.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
 

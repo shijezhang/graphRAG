@@ -43,11 +43,9 @@ class CommunitySummarizer:
     def __init__(self, llm_config: LLMConfig):
         self.llm = LLMClient(llm_config)
 
-    def summarize_communities(
-        self, communities: list[Community], graph: nx.Graph
-    ) -> list[Community]:
+    def summarize_communities(self, communities: list[Community], graph: nx.Graph) -> list[Community]:
         for i, community in enumerate(communities):
-            logger.info(f"Summarizing community {i+1}/{len(communities)} ({len(community.node_keys)} nodes)")
+            logger.info(f"Summarizing community {i + 1}/{len(communities)} ({len(community.node_keys)} nodes)")
             try:
                 self._summarize_single(community, graph)
             except Exception as e:
@@ -60,9 +58,7 @@ class CommunitySummarizer:
         entities_text = self._format_entities(community, graph)
         relations_text = self._format_relations(community, graph)
 
-        user_prompt = COMMUNITY_SUMMARY_USER.format(
-            entities_text=entities_text, relations_text=relations_text
-        )
+        user_prompt = COMMUNITY_SUMMARY_USER.format(entities_text=entities_text, relations_text=relations_text)
         data = self.llm.chat_json(COMMUNITY_SUMMARY_SYSTEM, user_prompt)
 
         community.title = data.get("title", f"Community {community.id}")

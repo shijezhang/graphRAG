@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass, field
-from typing import Any
 
 from src.config import LLMConfig
 from src.document.chunker import Chunk
@@ -52,7 +51,7 @@ class EntityRelationExtractor:
         all_relations: list[Relation] = []
 
         for i, chunk in enumerate(chunks):
-            logger.info(f"Extracting from chunk {i+1}/{len(chunks)}")
+            logger.info(f"Extracting from chunk {i + 1}/{len(chunks)}")
             try:
                 result = self._extract_single(chunk, i)
                 all_entities.extend(result.entities)

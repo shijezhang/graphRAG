@@ -1,0 +1,23 @@
+requirements.txt
+  s_c066284d096fa2::t_ce15abfa6a0c95 15
+src/config.py
+  s_c066284d096fa2::t_8b1a24d679886c 19,135-146
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "b9ea01f152dde91136f0676bfce9be548bec4376",
+  "prompts": {},
+  "sessions": {
+    "s_c066284d096fa2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "107c7148-a83a-42cf-8240-3b571b8e78ea",
+        "model": "unknown"
+      },
+      "human_author": "zhangshijie <zhangshijie.bd@bytedance.com>"
+    }
+  },
+  "attestation_metadata": {},
+  "remote_transcripts": {}
+}

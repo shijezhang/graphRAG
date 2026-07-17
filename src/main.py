@@ -71,11 +71,7 @@ def build_graph(
     settings = get_settings(config)
 
     console.print(f"[bold]Loading chunks from:[/bold] {chunks_file}")
-    chunks_data = json.loads(Path(chunks_file).read_text(encoding="utf-8"))
-    chunks = [
-        Chunk(content=c["content"], metadata=c.get("metadata", {}), chunk_index=c.get("chunk_index", i))
-        for i, c in enumerate(chunks_data)
-    ]
+    chunks = Chunk.load_from_json(chunks_file)
     console.print(f"  Loaded {len(chunks)} chunk(s)")
 
     console.print("[bold]Extracting entities and relations...[/bold]")

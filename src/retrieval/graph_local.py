@@ -1,12 +1,13 @@
 from __future__ import annotations
 
+import json
 import logging
-from difflib import SequenceMatcher
 
 import networkx as nx
 
 from src.config import GraphLocalConfig
 from src.document.chunker import Chunk
+from src.utils import string_similarity
 
 logger = logging.getLogger(__name__)
 
@@ -48,7 +49,7 @@ class GraphLocalRetriever:
             if name in query_lower or query_lower in name:
                 matches.append((node, 1.0))
             else:
-                sim = SequenceMatcher(None, name, query_lower).ratio()
+                sim = string_similarity(name, query_lower)
                 if sim > 0.5:
                     matches.append((node, sim))
 

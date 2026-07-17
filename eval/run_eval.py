@@ -77,11 +77,7 @@ def run_evaluation():
     llm = LLMClient(settings.llm, cache_dir="data/processed/.llm_cache")
 
     # Load data
-    chunks_data = json.loads(Path("data/processed/chunks.json").read_text())
-    chunks = [
-        Chunk(content=c["content"], metadata=c.get("metadata", {}), chunk_index=c.get("chunk_index", i))
-        for i, c in enumerate(chunks_data)
-    ]
+    chunks = Chunk.load_from_json("data/processed/chunks.json")
     questions = json.loads(Path("eval/questions.json").read_text())
 
     # Init retrievers

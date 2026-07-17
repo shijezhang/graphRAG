@@ -2,12 +2,12 @@ from __future__ import annotations
 
 import json
 import logging
-from difflib import SequenceMatcher
 from pathlib import Path
 
 import networkx as nx
 
 from src.extraction.entity_extractor import Entity, ExtractionResult, Relation
+from src.utils import string_similarity
 
 logger = logging.getLogger(__name__)
 
@@ -114,7 +114,7 @@ class GraphBuilder:
 
     def _find_match(self, key: str, registry: dict[str, Entity], threshold: float = 0.85) -> str | None:
         for existing_key in registry:
-            if _similarity(key, existing_key) >= threshold:
+            if string_similarity(key, existing_key) >= threshold:
                 return existing_key
         return None
 
@@ -148,7 +148,3 @@ class GraphBuilder:
             data = json.loads(path.read_text(encoding="utf-8"))
             builder.graph = nx.node_link_graph(data)
         return builder
-
-
-def _similarity(a: str, b: str) -> float:
-    return SequenceMatcher(None, a, b).ratio()

@@ -1,6 +1,9 @@
+"""Document chunking with recursive splitting and overlap."""
 from __future__ import annotations
 
+import json
 from dataclasses import dataclass, field
+from pathlib import Path
 
 from src.config import ChunkingConfig
 from src.document.loader import Document
@@ -19,6 +22,26 @@ class Chunk:
     @property
     def token_count(self) -> int:
         return self.metadata.get("token_count", 0)
+
+    @staticmethod
+    def load_from_json(path: str | Path) -> list[Chunk]:
+        """Load chunks from JSON file.
+
+        Args:
+            path: Path to chunks JSON file
+
+        Returns:
+            List of Chunk objects
+        """
+        data = json.loads(Path(path).read_text(encoding="utf-8"))
+        return [
+            Chunk(
+                content=c["content"],
+                metadata=c.get("metadata", {}),
+                chunk_index=c.get("chunk_index", i)
+            )
+            for i, c in enumerate(data)
+        ]
 
 
 class RecursiveChunker:

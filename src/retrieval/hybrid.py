@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import json
 import logging
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
@@ -135,8 +134,4 @@ class HybridRetriever:
         )
 
     def _load_chunks(self, path: str | Path) -> list[Chunk]:
-        data = json.loads(Path(path).read_text(encoding="utf-8"))
-        return [
-            Chunk(content=c["content"], metadata=c.get("metadata", {}), chunk_index=c.get("chunk_index", i))
-            for i, c in enumerate(data)
-        ]
+        return Chunk.load_from_json(path)

@@ -1,0 +1,29 @@
+.claude/plans/graphrag-system-upgrade.md
+  s_c066284d096fa2::t_6b71c8a6f149ed 1-572
+.claude/settings.json
+  s_c066284d096fa2::t_8b6b7e9a73cf8d 51-63
+pyproject.toml
+  s_c066284d096fa2::t_ea930046e3a334 17
+src/config.py
+  s_c066284d096fa2::t_4289e29640b4ff 8-13,19,74-102,105-106,113-123,126,128-135,139-151
+src/extraction/llm_client.py
+  s_c066284d096fa2::t_b9009dc9fe5499 16-19
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "f5569bc404215787b4036f978715462e3d1e357a",
+  "prompts": {},
+  "sessions": {
+    "s_c066284d096fa2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "107c7148-a83a-42cf-8240-3b571b8e78ea",
+        "model": "unknown"
+      },
+      "human_author": "zhangshijie <zhangshijie.bd@bytedance.com>"
+    }
+  },
+  "attestation_metadata": {},
+  "remote_transcripts": {}
+}

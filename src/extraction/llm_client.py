@@ -13,7 +13,10 @@ from src.config import LLMConfig
 class LLMClient:
     def __init__(self, config: LLMConfig, cache_dir: str | Path | None = "data/processed/.llm_cache"):
         self.config = config
-        self.client = OpenAI(api_key=config.api_key, base_url=config.base_url)
+        self.client = OpenAI(
+            api_key=config.api_key.get_secret_value(),
+            base_url=config.base_url
+        )
         self.cache_dir = Path(cache_dir) if cache_dir else None
         if self.cache_dir:
             self.cache_dir.mkdir(parents=True, exist_ok=True)

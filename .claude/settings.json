@@ -48,7 +48,19 @@
       "Bash(python3 -c \"import json; print\\(len\\(json.load\\(open\\('eval/questions.json'\\)\\)\\)\\)\")",
       "Bash(git init *)",
       "Bash(git branch *)",
-      "Bash(git add *)"
+      "Bash(git add *)",
+      "Bash(grep -v \"api_key: str\\\\|api_key=config\\\\|DEEPSEEK_API_KEY\\\\|api_key.*\\\\${\")",
+      "Bash(echo \"exit: $?\")",
+      "Bash(git commit -m ' *)",
+      "Bash(git remote *)",
+      "Bash(git ls-remote *)",
+      "Bash(echo \"EXIT: $?\")",
+      "Bash(git push *)",
+      "Read(//Users/bytedance/.ssh/**)",
+      "Bash(security find-generic-password *)",
+      "Bash(ssh -T git@github.com -o BatchMode=yes -o ConnectTimeout=5)",
+      "Bash(git rm *)",
+      "Bash(git commit *)"
     ]
   }
 }

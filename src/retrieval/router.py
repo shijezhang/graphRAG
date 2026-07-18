@@ -4,8 +4,8 @@ import logging
 from dataclasses import dataclass
 from enum import Enum
 
-from src.config import LLMConfig
-from src.extraction.llm_client import LLMClient
+from src.config import LLMConfig, RouterConfig
+from src.extraction.llm_client import create_llm_client
 
 logger = logging.getLogger(__name__)
 
@@ -27,54 +27,6 @@ ROUTER_USER = """问题：{query}
 
 请判断：LOCAL 还是 GLOBAL？"""
 
-GLOBAL_KEYWORDS = [
-    # General
-    "总结",
-    "概括",
-    "核心",
-    "主要",
-    "整体",
-    "全部",
-    "所有",
-    "主题",
-    "观点",
-    "结论",
-    "综述",
-    "概述",
-    "全文",
-    "全书",
-    "比较",
-    "对比",
-    "异同",
-    "区别",
-    "联系",
-    "关系",
-    "趋势",
-    "规律",
-    "特点",
-    "特征",
-    "影响",
-    "作用",
-    "summarize",
-    "overview",
-    "main",
-    "overall",
-    "all",
-    "themes",
-    "compare",
-    # Finance domain
-    "投资策略",
-    "市场概况",
-    "行业分析",
-    "宏观",
-    "整个市场",
-    "各类",
-    "不同类型",
-    "哪些方面",
-    "综合",
-    "全面",
-]
-
 
 @dataclass
 class RoutingResult:
@@ -83,9 +35,15 @@ class RoutingResult:
 
 
 class QueryRouter:
-    def __init__(self, llm_config: LLMConfig | None = None, use_llm: bool = False):
+    def __init__(
+        self,
+        llm_config: LLMConfig | None = None,
+        use_llm: bool = False,
+        router_config: RouterConfig | None = None,
+    ):
         self.use_llm = use_llm
-        self.llm = LLMClient(llm_config) if llm_config and use_llm else None
+        self.llm = create_llm_client(llm_config) if llm_config and use_llm else None
+        self.config = router_config or RouterConfig()
 
     def route(self, query: str) -> RoutingResult:
         if self.use_llm and self.llm:
@@ -96,22 +54,22 @@ class QueryRouter:
         query_lower = query.lower()
         score = 0.0
         matched_global = 0
-        for keyword in GLOBAL_KEYWORDS:
+        for keyword in self.config.global_keywords:
             if keyword in query_lower:
-                score += 0.3
+                score += self.config.keyword_score
                 matched_global += 1
 
-        # Only penalize "what is X" pattern when no global keywords matched
+        # Only penalize local-pattern questions when no global keywords matched
         if (
             matched_global == 0
             and ("?" in query or "？" in query)
-            and any(w in query_lower for w in ["什么是", "是什么", "what is", "who is"])
+            and any(p in query_lower for p in self.config.local_patterns)
         ):
-            score -= 0.2
+            score -= self.config.local_pattern_penalty
 
         score = max(0.0, min(1.0, score))
 
-        if score >= 0.5:
+        if score >= self.config.global_threshold:
             return RoutingResult(query_type=QueryType.GLOBAL, confidence=score)
         return RoutingResult(query_type=QueryType.LOCAL, confidence=1.0 - score)
 

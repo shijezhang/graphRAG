@@ -5,7 +5,7 @@ from collections.abc import Generator
 from dataclasses import dataclass, field
 
 from src.config import Settings
-from src.extraction.llm_client import LLMClient
+from src.extraction.llm_client import LLMClientProtocol, create_llm_client
 from src.retrieval.hybrid import HybridRetriever, RetrievalResult
 from src.retrieval.router import QueryType
 
@@ -38,9 +38,9 @@ class Message:
 
 
 class ExpertAgent:
-    def __init__(self, settings: Settings):
+    def __init__(self, settings: Settings, llm: LLMClientProtocol | None = None):
         self.settings = settings
-        self.llm = LLMClient(settings.llm, cache_dir=None)
+        self.llm = llm or create_llm_client(settings.llm, cache_dir=None)
         self.retriever = HybridRetriever(settings)
         self.history: list[Message] = []
         self.max_history: int = 10

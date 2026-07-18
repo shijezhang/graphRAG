@@ -9,6 +9,7 @@ from src.config import Settings
 from src.document.chunker import Chunk
 from src.graph.builder import GraphBuilder
 from src.retrieval.dense import DenseRetriever
+from src.retrieval.fusion import fuse
 from src.retrieval.graph_global import GraphGlobalRetriever
 from src.retrieval.graph_local import GraphLocalRetriever
 from src.retrieval.router import QueryRouter, QueryType, RoutingResult
@@ -29,7 +30,7 @@ class RetrievalResult:
 class HybridRetriever:
     def __init__(self, settings: Settings):
         self.settings = settings
-        self.router = QueryRouter(settings.llm, use_llm=False)
+        self.router = QueryRouter(settings.llm, use_llm=False, router_config=settings.retrieval.router)
         self.sparse = SparseRetriever(settings.retrieval.sparse)
         self.graph_local = GraphLocalRetriever(settings.retrieval.graph_local)
         self.graph_global = GraphGlobalRetriever(settings.retrieval.graph_global, settings.llm)
@@ -91,43 +92,34 @@ class HybridRetriever:
         )
 
     def _search_local(self, query: str, routing: RoutingResult, use_dense: bool = False) -> RetrievalResult:
-        all_chunks: dict[int, tuple[Chunk, float, str]] = {}
-
         def _run_sparse():
-            return [("bm25", chunk, score) for chunk, score in self.sparse.search(query)]
+            return self.sparse.search(query)
 
         def _run_graph_local():
             try:
-                return [("graph_local", chunk, score) for chunk, score in self.graph_local.search(query)]
+                return self.graph_local.search(query)
             except RuntimeError:
                 return []
 
         with ThreadPoolExecutor(max_workers=2) as executor:
             sparse_future = executor.submit(_run_sparse)
             graph_future = executor.submit(_run_graph_local)
-            sparse_hits = sparse_future.result()
-            graph_hits = graph_future.result()
-
-        for source, chunk, score in sparse_hits + graph_hits:
-            idx = chunk.chunk_index
-            if idx not in all_chunks or score > all_chunks[idx][1]:
-                all_chunks[idx] = (chunk, score, source)
+            hits_by_source = {
+                "bm25": sparse_future.result(),
+                "graph_local": graph_future.result(),
+            }
 
         # Dense (optional, sequential — only used when explicitly enabled)
         if use_dense and self._dense:
-            dense_results = self.dense.search(query)
-            for chunk, score in dense_results:
-                idx = chunk.chunk_index
-                if idx not in all_chunks or score > all_chunks[idx][1]:
-                    all_chunks[idx] = (chunk, score, "dense")
+            hits_by_source["dense"] = self.dense.search(query)
 
-        sorted_chunks = sorted(all_chunks.values(), key=lambda x: x[1], reverse=True)
+        fused_chunks = fuse(hits_by_source, self.settings.retrieval.fusion)
         top_k = self.settings.retrieval.dense.top_k
         return RetrievalResult(
             query=query,
             query_type=QueryType.LOCAL,
             routing_confidence=routing.confidence,
-            chunks=sorted_chunks[:top_k],
+            chunks=fused_chunks[:top_k],
         )
 
     def _load_chunks(self, path: str | Path) -> list[Chunk]:

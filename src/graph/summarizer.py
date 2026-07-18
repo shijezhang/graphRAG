@@ -5,7 +5,7 @@ import logging
 import networkx as nx
 
 from src.config import LLMConfig
-from src.extraction.llm_client import LLMClient
+from src.extraction.llm_client import LLMClientProtocol, create_llm_client
 from src.graph.community import Community
 
 logger = logging.getLogger(__name__)
@@ -40,8 +40,8 @@ COMMUNITY_SUMMARY_USER = """请为以下社区生成结构化摘要：
 
 
 class CommunitySummarizer:
-    def __init__(self, llm_config: LLMConfig):
-        self.llm = LLMClient(llm_config)
+    def __init__(self, llm_config: LLMConfig, llm: LLMClientProtocol | None = None):
+        self.llm = llm or create_llm_client(llm_config)
 
     def summarize_communities(self, communities: list[Community], graph: nx.Graph) -> list[Community]:
         if not communities:

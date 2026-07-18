@@ -10,7 +10,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass, field
 from pathlib import Path
 from threading import Lock
-from typing import Any
+from typing import Any, Protocol, runtime_checkable
 
 from openai import APIConnectionError, APIStatusError, APITimeoutError, OpenAI, RateLimitError
 
@@ -65,6 +65,20 @@ class LLMStats:
             "cache_hits": self.cache_hits,
             "success_rate": round(self.success_rate, 4),
         }
+
+
+@runtime_checkable
+class LLMClientProtocol(Protocol):
+    """Structural protocol for LLM clients. Implementations only need the public API."""
+
+    config: LLMConfig
+    stats: LLMStats
+
+    def chat(self, system: str, user: str, temperature: float | None = None) -> str: ...
+    def chat_json(self, system: str, user: str) -> dict[str, Any]: ...
+    def chat_stream(self, system: str, user: str) -> Generator[str, None, None]: ...
+    def batch_chat(self, requests: list[tuple[str, str]], temperature: float | None = None) -> list[str | None]: ...
+    def batch_chat_json(self, requests: list[tuple[str, str]]) -> list[dict[str, Any] | None]: ...
 
 
 class LLMClient:
@@ -210,6 +224,20 @@ class LLMClient:
             json.dumps({"response": response}, ensure_ascii=False),
             encoding="utf-8",
         )
+
+
+def create_llm_client(
+    config: LLMConfig, cache_dir: str | Path | None = "data/processed/.llm_cache"
+) -> LLMClientProtocol:
+    """Build an LLM client for the configured provider.
+
+    All currently supported providers (deepseek, openai, and other OpenAI-compatible
+    APIs) share the same chat-completions wire format, so this always returns an
+    `LLMClient` pointed at `config.base_url`. Centralizing construction here means
+    callers depend on `LLMClientProtocol` rather than the concrete class, so tests
+    can inject a fake implementing the same protocol.
+    """
+    return LLMClient(config, cache_dir=cache_dir)
 
 
 def _parse_json_response(text: str) -> dict[str, Any]:

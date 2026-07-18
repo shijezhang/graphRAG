@@ -5,7 +5,7 @@ from dataclasses import dataclass, field
 
 from src.config import LLMConfig
 from src.document.chunker import Chunk
-from src.extraction.llm_client import LLMClient
+from src.extraction.llm_client import LLMClientProtocol, create_llm_client
 from src.extraction.prompts import (
     ENTITY_EXTRACTION_SYSTEM,
     ENTITY_EXTRACTION_USER,
@@ -43,8 +43,8 @@ class ExtractionResult:
 
 
 class EntityRelationExtractor:
-    def __init__(self, llm_config: LLMConfig):
-        self.llm = LLMClient(llm_config)
+    def __init__(self, llm_config: LLMConfig, llm: LLMClientProtocol | None = None):
+        self.llm = llm or create_llm_client(llm_config)
 
     def extract_from_chunks(self, chunks: list[Chunk]) -> ExtractionResult:
         all_entities: list[Entity] = []

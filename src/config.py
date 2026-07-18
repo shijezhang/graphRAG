@@ -61,11 +61,77 @@ class GraphGlobalConfig(BaseModel):
     top_k: int = 5
 
 
+DEFAULT_GLOBAL_KEYWORDS: list[str] = [
+    # General
+    "总结",
+    "概括",
+    "核心",
+    "主要",
+    "整体",
+    "全部",
+    "所有",
+    "主题",
+    "观点",
+    "结论",
+    "综述",
+    "概述",
+    "全文",
+    "全书",
+    "比较",
+    "对比",
+    "异同",
+    "区别",
+    "联系",
+    "关系",
+    "趋势",
+    "规律",
+    "特点",
+    "特征",
+    "影响",
+    "作用",
+    "summarize",
+    "overview",
+    "main",
+    "overall",
+    "all",
+    "themes",
+    "compare",
+    # Finance domain
+    "投资策略",
+    "市场概况",
+    "行业分析",
+    "宏观",
+    "整个市场",
+    "各类",
+    "不同类型",
+    "哪些方面",
+    "综合",
+    "全面",
+]
+
+DEFAULT_LOCAL_PATTERNS: list[str] = ["什么是", "是什么", "what is", "who is"]
+
+
+class RouterConfig(BaseModel):
+    global_keywords: list[str] = Field(default_factory=lambda: list(DEFAULT_GLOBAL_KEYWORDS))
+    local_patterns: list[str] = Field(default_factory=lambda: list(DEFAULT_LOCAL_PATTERNS))
+    keyword_score: float = 0.3
+    global_threshold: float = 0.5
+    local_pattern_penalty: float = 0.2
+
+
+class FusionConfig(BaseModel):
+    strategy: Literal["rrf", "max_score"] = "rrf"
+    rrf_k: int = 60  # RRF constant: score = 1/(k + rank)
+
+
 class RetrievalConfig(BaseModel):
     dense: DenseRetrievalConfig = Field(default_factory=DenseRetrievalConfig)
     sparse: SparseRetrievalConfig = Field(default_factory=SparseRetrievalConfig)
     graph_local: GraphLocalConfig = Field(default_factory=GraphLocalConfig)
     graph_global: GraphGlobalConfig = Field(default_factory=GraphGlobalConfig)
+    router: RouterConfig = Field(default_factory=RouterConfig)
+    fusion: FusionConfig = Field(default_factory=FusionConfig)
 
 
 class PathsConfig(BaseModel):

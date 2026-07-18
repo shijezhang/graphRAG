@@ -8,7 +8,7 @@ from pathlib import Path
 from rank_bm25 import BM25Okapi
 
 from src.config import GraphGlobalConfig, LLMConfig
-from src.extraction.llm_client import LLMClient
+from src.extraction.llm_client import LLMClientProtocol, create_llm_client
 from src.graph.community import Community
 
 logger = logging.getLogger(__name__)
@@ -50,9 +50,14 @@ REDUCE_USER = """用户问题：{query}
 
 
 class GraphGlobalRetriever:
-    def __init__(self, global_config: GraphGlobalConfig, llm_config: LLMConfig):
+    def __init__(
+        self,
+        global_config: GraphGlobalConfig,
+        llm_config: LLMConfig,
+        llm: LLMClientProtocol | None = None,
+    ):
         self.config = global_config
-        self.llm = LLMClient(llm_config)
+        self.llm = llm or create_llm_client(llm_config)
         self._communities: list[list[Community]] = []
         self._bm25_index: BM25Okapi | None = None
         self._bm25_communities: list[Community] = []

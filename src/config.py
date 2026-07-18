@@ -20,6 +20,9 @@ class LLMConfig(BaseModel):
     base_url: str = "https://api.deepseek.com"
     temperature: float = 0.0
     max_tokens: int = 4096
+    concurrency: int = 8
+    max_retries: int = 3
+    retry_base_delay: float = 1.0
 
 
 class EmbeddingConfig(BaseModel):

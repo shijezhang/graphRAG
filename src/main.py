@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import networkx as nx
 import typer
@@ -11,6 +12,9 @@ from rich.table import Table
 from src.config import get_settings
 from src.document.chunker import RecursiveChunker
 from src.document.loader import load_documents
+
+if TYPE_CHECKING:
+    from src.extraction.llm_client import LLMStats
 
 app = typer.Typer(name="graphrag", help="GraphRAG V2 - 垂直领域专家 Agent")
 console = Console()
@@ -94,6 +98,8 @@ def build_graph(
     table.add_row("Connected Components", str(nx.number_connected_components(graph)))
     console.print(table)
 
+    _print_llm_stats(extractor.llm.stats)
+
 
 @app.command()
 def build_communities(
@@ -127,6 +133,7 @@ def build_communities(
     )
     hierarchy = detector.detect(graph)
 
+    summarizer = None
     if summarize and hierarchy:
         console.print("[bold]Generating community summaries...[/bold]")
         summarizer = CommunitySummarizer(settings.llm)
@@ -144,6 +151,23 @@ def build_communities(
         level = level_communities[0].level if level_communities else "?"
         avg_size = sum(len(c.node_keys) for c in level_communities) / len(level_communities)
         table.add_row(str(level), str(len(level_communities)), f"{avg_size:.1f}")
+    console.print(table)
+
+    if summarizer is not None:
+        _print_llm_stats(summarizer.llm.stats)
+
+
+def _print_llm_stats(stats: LLMStats) -> None:
+    d = stats.as_dict()
+    table = Table(title="LLM Call Statistics")
+    table.add_column("Metric", style="cyan")
+    table.add_column("Value", style="magenta")
+    table.add_row("Total Calls", str(d["total_calls"]))
+    table.add_row("Succeeded", str(d["successful_calls"]))
+    table.add_row("Failed", str(d["failed_calls"]))
+    table.add_row("Retried", str(d["retried_calls"]))
+    table.add_row("Cache Hits", str(d["cache_hits"]))
+    table.add_row("Success Rate", f"{d['success_rate']:.1%}")
     console.print(table)
 
 

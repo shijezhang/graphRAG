@@ -5,6 +5,9 @@ llm:
   base_url: https://api.deepseek.com
   temperature: 0.0
   max_tokens: 4096
+  concurrency: 8       # Max concurrent LLM requests for batch operations (extraction, summarization, map-reduce)
+  max_retries: 3        # Retries on transient errors (timeouts, rate limits, 5xx) with exponential backoff
+  retry_base_delay: 1.0 # Base delay in seconds; actual delay = retry_base_delay * 2^attempt
 
 embedding:
   model: BAAI/bge-m3

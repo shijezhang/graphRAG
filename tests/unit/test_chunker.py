@@ -79,18 +79,27 @@ class TestRecursiveChunker:
         chunks = chunker.chunk_documents([doc])
         assert len(chunks) > 1
 
-    def test_cjk_overlap_bug(self):
-        """CJK text with no spaces: _get_overlap uses text.split() which fails.
-
-        This test documents the known bug: for CJK content, overlap produces
-        empty or wrong results because split() on whitespace finds no words.
-        Once the P1 fix lands, this test should be updated to assert correct behavior.
-        """
+    def test_cjk_overlap_produces_non_empty_result(self):
+        """P1 fix: CJK text with no spaces now produces correct overlap via char-based fallback."""
         config = ChunkingConfig(chunk_size=20, chunk_overlap=10)
         chunker = RecursiveChunker(config)
 
         # Pure CJK text — no spaces, so text.split() returns a single item
         cjk_text = "这是一段没有空格的中文文本" * 30
         overlap = chunker._get_overlap(cjk_text)
-        # Document current (buggy) behavior: overlap is empty because split() finds no tokens
-        assert overlap == ""
+        # After the fix, char-based fallback should return a non-empty suffix
+        assert overlap != "", "CJK overlap should be non-empty after P1 fix"
+        # The overlap should be a suffix of the original text
+        assert cjk_text.endswith(overlap)
+
+    def test_cjk_overlap_respects_token_budget(self):
+        config = ChunkingConfig(chunk_size=200, chunk_overlap=5)
+        chunker = RecursiveChunker(config)
+        cjk_text = "这是中文文本无空格测试" * 10
+        overlap = chunker._get_overlap(cjk_text)
+        assert overlap != ""
+        # Overlap token count must not exceed the budget significantly
+        from src.document.chunker import _estimate_tokens
+
+        tokens = _estimate_tokens(overlap)
+        assert tokens <= config.chunk_overlap + 2  # +2 for per-char rounding

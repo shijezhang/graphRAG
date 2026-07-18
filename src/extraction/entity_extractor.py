@@ -50,22 +50,34 @@ class EntityRelationExtractor:
         all_entities: list[Entity] = []
         all_relations: list[Relation] = []
 
-        for i, chunk in enumerate(chunks):
-            logger.info(f"Extracting from chunk {i + 1}/{len(chunks)}")
-            try:
-                result = self._extract_single(chunk, i)
-                all_entities.extend(result.entities)
-                all_relations.extend(result.relations)
-            except Exception as e:
-                logger.warning(f"Failed to extract from chunk {i}: {e}")
+        requests = [(ENTITY_EXTRACTION_SYSTEM, ENTITY_EXTRACTION_USER.format(text=chunk.content)) for chunk in chunks]
+        logger.info(
+            f"Extracting entities/relations from {len(chunks)} chunk(s), concurrency={self.llm.config.concurrency}"
+        )
+        responses = self.llm.batch_chat_json(requests)
+
+        failed = 0
+        for i, data in enumerate(responses):
+            if data is None:
+                failed += 1
+                logger.warning(f"Failed to extract from chunk {i} after retries")
                 continue
+            try:
+                result = self._parse_result(data, i)
+            except (KeyError, TypeError, ValueError) as e:
+                failed += 1
+                logger.warning(f"Malformed extraction result for chunk {i}: {e}")
+                continue
+            all_entities.extend(result.entities)
+            all_relations.extend(result.relations)
+
+        succeeded = len(chunks) - failed
+        rate = succeeded / len(chunks) if chunks else 1.0
+        logger.info(f"Extraction complete: {succeeded}/{len(chunks)} chunks succeeded ({rate:.1%})")
 
         return ExtractionResult(entities=all_entities, relations=all_relations)
 
-    def _extract_single(self, chunk: Chunk, chunk_index: int) -> ExtractionResult:
-        user_prompt = ENTITY_EXTRACTION_USER.format(text=chunk.content)
-        data = self.llm.chat_json(ENTITY_EXTRACTION_SYSTEM, user_prompt)
-
+    def _parse_result(self, data: dict, chunk_index: int) -> ExtractionResult:
         entities = []
         for e in data.get("entities", []):
             entities.append(

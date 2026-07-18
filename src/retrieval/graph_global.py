@@ -108,7 +108,7 @@ class GraphGlobalRetriever:
         return self._reduce_phase(query, mapped)
 
     def _map_phase(self, query: str, communities: list[Community]) -> list[tuple[Community, dict]]:
-        max_workers = min(32, len(communities))
+        max_workers = min(self.llm.config.concurrency, len(communities)) or 1
         results: list[tuple[Community, dict]] = [None] * len(communities)  # type: ignore[list-item]
 
         def _call(idx: int, community: Community) -> tuple[int, Community, dict]:

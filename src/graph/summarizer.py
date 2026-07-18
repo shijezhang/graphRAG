@@ -44,27 +44,40 @@ class CommunitySummarizer:
         self.llm = LLMClient(llm_config)
 
     def summarize_communities(self, communities: list[Community], graph: nx.Graph) -> list[Community]:
-        for i, community in enumerate(communities):
-            logger.info(f"Summarizing community {i + 1}/{len(communities)} ({len(community.node_keys)} nodes)")
-            try:
-                self._summarize_single(community, graph)
-            except Exception as e:
-                logger.warning(f"Failed to summarize community {community.id}: {e}")
+        if not communities:
+            return communities
+
+        logger.info(f"Summarizing {len(communities)} community(ies), concurrency={self.llm.config.concurrency}")
+        requests = [
+            (
+                COMMUNITY_SUMMARY_SYSTEM,
+                COMMUNITY_SUMMARY_USER.format(
+                    entities_text=self._format_entities(c, graph),
+                    relations_text=self._format_relations(c, graph),
+                ),
+            )
+            for c in communities
+        ]
+        responses = self.llm.batch_chat_json(requests)
+
+        failed = 0
+        for community, data in zip(communities, responses, strict=True):
+            if data is None:
+                failed += 1
+                logger.warning(f"Failed to summarize community {community.id} after retries")
                 community.title = f"Community {community.id}"
                 community.summary = f"包含 {len(community.node_keys)} 个实体的社区"
+                continue
+            community.title = data.get("title", f"Community {community.id}")
+            community.summary = data.get("summary", "")
+            community.key_findings = data.get("key_findings", [])
+            community.importance_score = float(data.get("importance_score", 0.5))
+
+        succeeded = len(communities) - failed
+        rate = succeeded / len(communities)
+        logger.info(f"Summarization complete: {succeeded}/{len(communities)} communities succeeded ({rate:.1%})")
+
         return communities
-
-    def _summarize_single(self, community: Community, graph: nx.Graph) -> None:
-        entities_text = self._format_entities(community, graph)
-        relations_text = self._format_relations(community, graph)
-
-        user_prompt = COMMUNITY_SUMMARY_USER.format(entities_text=entities_text, relations_text=relations_text)
-        data = self.llm.chat_json(COMMUNITY_SUMMARY_SYSTEM, user_prompt)
-
-        community.title = data.get("title", f"Community {community.id}")
-        community.summary = data.get("summary", "")
-        community.key_findings = data.get("key_findings", [])
-        community.importance_score = float(data.get("importance_score", 0.5))
 
     def _format_entities(self, community: Community, graph: nx.Graph) -> str:
         lines = []

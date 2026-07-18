@@ -128,7 +128,24 @@ class RecursiveChunker:
     def _get_overlap(self, text: str) -> str:
         if self.chunk_overlap <= 0:
             return ""
+
+        # For CJK text (no spaces), text.split() returns one token and overlap
+        # would be empty. Fall back to character-by-character accumulation.
         words = text.split()
+        if len(words) <= 1 and len(text) > 0:
+            # Build overlap from the tail of the text, one char at a time
+            overlap_chars = []
+            token_count = 0
+            for ch in reversed(text):
+                ch_tokens = _estimate_tokens(ch)
+                # _estimate_tokens("x") rounds down fractions, so force minimum 1
+                ch_tokens = ch_tokens or 1
+                if token_count + ch_tokens > self.chunk_overlap:
+                    break
+                token_count += ch_tokens
+                overlap_chars.insert(0, ch)
+            return "".join(overlap_chars)
+
         overlap_words = []
         token_count = 0
         for word in reversed(words):

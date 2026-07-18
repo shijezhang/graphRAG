@@ -1,0 +1,39 @@
+configs/default.yaml
+  s_c066284d096fa2::t_65ca79232c246b 8-10
+src/config.py
+  s_c066284d096fa2::t_afbe9885f14918 23-25
+src/document/chunker.py
+  s_c066284d096fa2::t_20ec0042d591e7 131-133,135-148
+src/extraction/entity_extractor.py
+  s_c066284d096fa2::t_98302cb80e62b5 53-64,66-69,71-72,74-76,78,80
+src/extraction/llm_client.py
+  s_c066284d096fa2::t_74583598647814 6-7,9-10,12,15,19-68,77,83,86,90-120,142-189
+src/graph/summarizer.py
+  s_c066284d096fa2::t_935bc3e2492925 47-67,70-74,76-78,80
+src/main.py
+  s_c066284d096fa2::t_bea6e08a15a4d1 5,16-18,101-102,136,156-172
+src/retrieval/graph_global.py
+  s_c066284d096fa2::t_5d43be94bb04ca 111
+tests/unit/test_chunker.py
+  s_c066284d096fa2::t_5b7e8f2cc52978 82-83,90-105
+tests/unit/test_llm_client.py
+  s_c066284d096fa2::t_9090fbbb1e41ea 1-183
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "8f6adc708365b4ddd3a287e42948fe3b4c31ea5e",
+  "prompts": {},
+  "sessions": {
+    "s_c066284d096fa2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "107c7148-a83a-42cf-8240-3b571b8e78ea",
+        "model": "unknown"
+      },
+      "human_author": "zhangshijie <zhangshijie.bd@bytedance.com>"
+    }
+  },
+  "attestation_metadata": {},
+  "remote_transcripts": {}
+}

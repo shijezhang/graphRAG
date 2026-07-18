@@ -1,0 +1,45 @@
+configs/default.yaml
+  s_c066284d096fa2::t_be64b64305fdb7 43-53
+src/agent/agent.py
+  s_c066284d096fa2::t_70c2664a40a9b9 8,41,43
+src/config.py
+  s_c066284d096fa2::t_07f86f739d8610 64-127,133-134
+src/extraction/entity_extractor.py
+  s_c066284d096fa2::t_59308a924a3e8f 8,46-47
+src/extraction/llm_client.py
+  s_c066284d096fa2::t_d3df42a9b7ccaa 13,70-83,229-242
+src/graph/summarizer.py
+  s_c066284d096fa2::t_8eb269bf82968a 8,43-44
+src/retrieval/fusion.py
+  s_c066284d096fa2::t_f602f573dcf0f5 1-46
+src/retrieval/graph_global.py
+  s_c066284d096fa2::t_3a97c5a01d70f7 11,53-58,60
+src/retrieval/hybrid.py
+  s_c066284d096fa2::t_e4b1b6bf611807 12,33,96,100,107-110,114,116,122
+src/retrieval/router.py
+  s_c066284d096fa2::t_4d8100e0128bef 7-8,38-43,45-46,57,59,62,66,68,72
+tests/helpers.py
+  s_c066284d096fa2::t_5bd4b0ada1067e 1-53
+tests/unit/test_fusion.py
+  s_c066284d096fa2::t_1c951a5cd6859f 1-87
+tests/unit/test_llm_protocol.py
+  s_c066284d096fa2::t_0a9360d893f5e4 1-75
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "e40dcecbb3406ef3678246ac4c4f8d23400112fd",
+  "prompts": {},
+  "sessions": {
+    "s_c066284d096fa2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "107c7148-a83a-42cf-8240-3b571b8e78ea",
+        "model": "unknown"
+      },
+      "human_author": "zhangshijie <zhangshijie.bd@bytedance.com>"
+    }
+  },
+  "attestation_metadata": {},
+  "remote_transcripts": {}
+}
